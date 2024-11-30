@@ -138,7 +138,7 @@ document.addEventListener('touchend', function(event){
 	const countWords = words.split(' ').length
 
 	// TODO: Если есть .!? в середине то не выполнять 
-	if (2 <= countWords && countWords <= 4){
+	if (2 <= countWords){ //&& countWords <= 4){
 
 		const strong = document.createElement('strong')
 
@@ -250,7 +250,6 @@ h1{
 
 main{
 	text-align: center; /* Центрируем текст потомков */
-	margin: auto;
 }
 button{
 	border-radius: 50%;
