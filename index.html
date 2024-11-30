@@ -15,7 +15,30 @@
 <style>
 body{
 	font-family: Tahoma, sans-serif;
+	height: 100vh;
+
+	display: flex; /* Используем flexbox для центрирования содержимого */
+	align-items: center; /* Центрируем содержимое по вертикали */
+	justify-content: center; /* Центрируем содержимое по горизонтали */
+	text-align: center; /* Центрируем текст потомков */
+
+	/* отключить инерцию ios при прокрутки (также когда высота страницы ниже высоты экрана) */
+	/* также отключает все стандартные жесты(свайп вниз - обовление старницы) и прокрутку */
+	touch-action: none;
 }
+
+
+h1{
+	font-weight: 100;
+}
+
+button{
+	border-radius: 50%;
+	padding: 2em;
+	color: inherit;
+	background: transparent;
+}
+
 /* Темная тема */
 @media (prefers-color-scheme: dark) {
 	body {
@@ -28,11 +51,13 @@ body{
 
 <body>
 <main>
-	<p id="hero-phrase">Испанский рядом – микрофон включай!</p>
-	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+	<h1 id="hero-phrase">Испанский рядом — микрофон включай!</h1>
+	<button>
+	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width='200px'>
 	<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
 	</path>
 	</svg>
+	</button>
 
 <script>
 
@@ -46,13 +71,13 @@ body{
 
 const phrases = [
 	"Включи микрофон в испанской атмосфере!",
-	"В испанской атмосфере – включай микрофон!",
+	"В испанской атмосфере — включай микрофон!",
 	"Испанский рядом – микрофон включай!",
 	"Говорят по-испански: включи микрофон!",
-	"Слышишь испанский: включи микрофон!"];
+	"Слышишь испанский: включи микрофон!"]
 
 // Генерация случайного индекса
-const randomIndex = Math.floor(Math.random() * phrases.length);
+const randomIndex = Math.floor(Math.random() * phrases.length)
 
 // Установка случайной фразы в элемент с id="main-phrase"
 //document.getElementById('hero-phrase').textContent = phrases[randomIndex]
