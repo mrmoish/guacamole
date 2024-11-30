@@ -12,6 +12,202 @@
 		так что страница не будет выглядеть уменьшенной или увеличенной.-->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<script>
+
+/*
+	============================================
+	РАСПОЗНОВАНИЕ РЕЧИ
+	============================================
+*/
+// --- РАСПОЗНОВАНИЕ РЕЧИ --
+
+function startHearing(){
+	// Проверяем поддержку Web Speech API
+	if (!('webkitSpeechRecognition' in window)) {
+		alert('Ваш браузер не поддерживает эту функцию')
+		return
+	}
+
+	document.getElementById('hello').style.display = 'none'
+	recognition.start()
+}
+
+const recognition = new webkitSpeechRecognition(); //  объект распознавания речи
+recognition.interimResults = true; // промежуточные результаты распознования
+// recognition.lang = 'es-AR'; // Устанавливаем языка и региона
+recognition.lang = 'ru-RU'; // Устанавливаем языка и региона
+
+
+recognition.onend = () => {
+    //алтернатива(немного калхоз)
+    recognition.start();
+    
+};
+
+recognition.onresult = (event) => {
+
+for (let i = event.resultIndex; i < event.results.length; i++) {
+
+	const text = event.results[i][0].transcript 
+
+	if (event.results[i].isFinal) {
+		// Добавляем в конец p
+		document.getElementById('process').insertAdjacentHTML('beforebegin', " " + text);
+		document.getElementById('process').innerHTML = ''
+	}
+	else{
+		document.getElementById('process').innerHTML = " " + text;
+	}
+
+	window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+}
+};
+
+/*
+	============================================
+	ВЫДЕЛЕННИНЕ ФРАЗ
+	============================================
+*/
+// --- ВЫДЕЛЕННИНЕ ФРАЗ  ---
+
+const selection = window.getSelection();
+
+let startFirst, startLast
+document.addEventListener('touchmove', function(event) {
+	// Получаем координаты касания первого палецв
+	const x = event.touches[0].clientX;
+	const y = event.touches[0].clientY;
+
+
+
+	// Находим текстовый узел под пальцем
+	// 🔴 эксперменталная фукнция (не стандарт)
+	// рабатей в хроме и сафаре
+	// не рабоатет в фаирфокс
+	const range = document.caretRangeFromPoint(x, y);
+
+
+	// если не тег p
+	if (range.startContainer.parentElement.tagName !== "P") 
+		return;
+
+	const text = range.startContainer.textContent; // Текст узла
+	const offset = range.startOffset; // Индекс буквы в тексте
+
+	// индокс ближайшего пробела слево от нажатия
+	const preStart = text.lastIndexOf(' ', offset); 
+	// если пробел
+	// range.collapsed
+	if(preStart === offset) return // если пробел
+	let start = preStart+1
+
+        
+
+	if(start === firstI) return // если тоже слово
+
+	// Индекс последней буквы слова или -1 если нет
+	const preEnd = text.indexOf(' ', offset);
+	// если -1 один то конец это конче строки
+	let end = preEnd !== -1 ?  preEnd : text.length;
+
+
+        
+
+	if(startFirst < start)// когда выделятся текст в направления конца 
+		start = startFirst
+	else if(start < startFirst) // когда выделятся текст в направления начала 
+		end = startLast
+	else if(!startFirst){ // первый раз
+		startFirst = start
+		startLast = end
+	} 
+	else return
+        
+
+
+	range.setStart(range.startContainer, start)
+	range.setEnd(range.startContainer, end)
+	
+	selection.removeAllRanges(); // Очищаем текущие выделения
+	selection.addRange(range); // Добавляем диапазон
+
+});
+
+document.addEventListener('touchend', function(event){
+	const words = selection.getRangeAt(0).toString()
+	const countWords = words.split(' ').length
+
+	// TODO: Если есть .!? в середине то не выполнять 
+	if (2 <= countWords && countWords <= 4){
+
+		const strong = document.createElement('strong')
+
+		selection.getRangeAt(0).surroundContents(strong)
+
+		
+		translateText(words, strong)
+	}
+
+       
+	selection.removeAllRanges(); // Очищаем текущие выделения
+
+	// TODO: баг перескакивает через strong
+	// TODO: что бы можно было выделить strong повтроно с большим контекстом
+	startFirst = undefined
+	// startLast = undefined
+})
+
+/*
+	============================================
+	ПЕРЕВОД ВЫДЕЛЕННЫХ ФРАЗ
+	============================================
+*/
+// --- ПЕРЕВОД ВЫДЕЛЕННЫХ ФРАЗ ---
+
+// === Перевод DeepL ===
+
+
+async function translateText(text, htmlObj) {
+
+	const url = 'https://api-free.deepl.com/v2/translate';
+	const apiKey = "6d57d47a-e332-4c47-b865-8d3e506be91e:fx"; // Вставьте ваш API ключ здесь
+
+	const params = new URLSearchParams();
+	params.append('auth_key', apiKey);
+	params.append('text', text);
+// params.append('source_lang', 'es');
+// params.append('target_lang', 'ru');
+
+
+	params.append('source_lang', 'ru');
+	params.append('target_lang', 'es');
+
+
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: params
+		});
+
+		if (!response.ok) {
+			alert(`Ошибка HTTP: ${response.status}`)
+			throw new Error(`Ошибка HTTP: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		const textTrans = data.translations[0].text
+	
+		htmlObj.setAttribute('data-overlay', textTrans)
+
+		// sent(text, textTrans)
+	} catch (error) {
+		alert('Ошибка:', error);
+	}
+}
+</script>
+
 <style>
 body{
 	font-family: Tahoma, sans-serif;
@@ -22,14 +218,34 @@ body{
 	justify-content: center; /* Центрируем содержимое по горизонтали */
 	text-align: center; /* Центрируем текст потомков */
 
+	text-align: justify;
+    margin: 2em;
+    line-height: 3em;
+
 	/* отключить инерцию ios при прокрутки (также когда высота страницы ниже высоты экрана) */
 	/* также отключает все стандартные жесты(свайп вниз - обовление старницы) и прокрутку */
 	touch-action: none;
 }
 
+span{
+    color: #ccc;
+}
+
+strong{
+	position: relative;
+	display:inline-block;
+}
+strong::before {
+	content: attr(data-overlay);
+	position: absolute;
+	bottom: 50%;
+	color: #ccc; 
+	white-space: nowrap;
+}
 
 h1{
 	font-weight: 100;
+	margin-bottom: 2em;
 }
 
 button{
@@ -50,9 +266,12 @@ button{
 </head>
 
 <body>
-<main>
-	<h1 id="hero-phrase">Испанский рядом — микрофон включай!</h1>
-	<button>
+
+<p><span id='process' ></span></p>
+
+<main id="hello">
+	<h1>Испанский рядом — микрофон включай!</h1>
+	<button onclick='startHearing()'>
 	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width='200px'>
 	<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
 	</path>
