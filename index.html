@@ -14,12 +14,62 @@
 
 <script>
 
+let lang = 'ru'
+
+const langs = {
+	ru: [
+		["Включи микрофон в испанской атмосфере!",
+		"В испанской атмосфере — включай микрофон!",
+		"Испанский рядом – микрофон включай!",
+		"Говорят по-испански: включи микрофон!",
+		"Слышишь испанский: включи микрофон!"],
+		'es-AR',
+		'es',
+		'ru'],
+	es: [
+		["¡Prendé el micrófono cuando escuchás ruso!",
+		"¡Micrófono listo cuando suena ruso!",
+		"¡Escuchás ruso? ¡Prendé el micro!",
+		"Si escuchás el idioma ruso, ¡usá el micrófono!"],
+		'ru-RU',
+		'es',
+		'ru']
+}
+
+
 /*
-	============================================
-	РАСПОЗНОВАНИЕ РЕЧИ
-	============================================
+	===================
+	СВАЙП - СМЕНА ЯЗЫКА
+	===================
 */
-// --- РАСПОЗНОВАНИЕ РЕЧИ --
+
+    // Объявляем переменную для хранения начальной позиции движения касания
+    let startY;
+
+    // Добавляем обработчик события начала движения касания
+    document.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY; // Сохраняем начальную позицию касания по оси Y
+    });
+
+    // Добавляем обработчик события окончания движения касания
+    document.addEventListener('touchend', function(e) {
+
+        // Получаем конечную позицию движения касания по оси Y
+        let endY = e.changedTouches[0].clientY;
+
+        // Проверка на свайп вверх (разница позиций больше 50 пикселей)
+        if (startY - endY > 50 || endY - startY > 50) {
+
+			lang = lang === 'ru' ? 'es' : 'ru'
+			setHeroPhrase()
+        }
+    });
+
+/*
+	==================
+	РАСПОЗНОВАНИЕ РЕЧИ
+	==================
+*/
 
 function startHearing(){
 	// Проверяем поддержку Web Speech API
@@ -34,8 +84,7 @@ function startHearing(){
 
 const recognition = new webkitSpeechRecognition(); //  объект распознавания речи
 recognition.interimResults = true; // промежуточные результаты распознования
-// recognition.lang = 'es-AR'; // Устанавливаем языка и региона
-recognition.lang = 'ru-RU'; // Устанавливаем языка и региона
+recognition.lang = langs[lang][1]; // Устанавливаем языка и региона
 
 
 recognition.onend = () => {
@@ -64,11 +113,10 @@ for (let i = event.resultIndex; i < event.results.length; i++) {
 };
 
 /*
-	============================================
+	================
 	ВЫДЕЛЕННИНЕ ФРАЗ
-	============================================
+	================
 */
-// --- ВЫДЕЛЕННИНЕ ФРАЗ  ---
 
 const selection = window.getSelection();
 
@@ -158,13 +206,10 @@ document.addEventListener('touchend', function(event){
 })
 
 /*
-	============================================
+	=======================
 	ПЕРЕВОД ВЫДЕЛЕННЫХ ФРАЗ
-	============================================
+	=======================
 */
-// --- ПЕРЕВОД ВЫДЕЛЕННЫХ ФРАЗ ---
-
-// === Перевод DeepL ===
 
 
 async function translateText(text, htmlObj) {
@@ -175,12 +220,9 @@ async function translateText(text, htmlObj) {
 	const params = new URLSearchParams();
 	params.append('auth_key', apiKey);
 	params.append('text', text);
-// params.append('source_lang', 'es');
-// params.append('target_lang', 'ru');
 
-
-	params.append('source_lang', 'ru');
-	params.append('target_lang', 'es');
+	params.append('source_lang', langs[lang][2]);
+	params.append('target_lang', langs[lang][3]);
 
 
 	try {
@@ -273,36 +315,46 @@ button{
 <p><span id='process' ></span></p>
 
 <main id="hello">
-	<h1>Si escuchás el idioma ruso, ¡usá el micrófono!</h1>
+	<h1 id='hero-phrase'></h1>
+	
 	<button onclick='startHearing()'>
 	<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width='200px'>
-	<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
-	</path>
+		<path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+		</path>
 	</svg>
-	</button>
+<!-- 
+	<svg width="200px" height="200px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<g id="icomoon-ignore">
+		</g>
+		<path stroke-linecap="round" d="M16.003 22.377c3.231 0 5.851-2.619 5.851-5.851v-10.639c0-3.231-2.62-5.85-5.851-5.85s-5.851 2.619-5.851 5.85v10.639c0 3.231 2.62 5.851 5.851 5.851zM11.216 5.888c0-2.639 2.147-4.786 4.787-4.786s4.787 2.147 4.787 4.786v10.639c0 2.64-2.147 4.787-4.787 4.787s-4.787-2.147-4.787-4.787v-10.639z" fill="#000000">
+		
+		</path>
+		<path stroke-linecap="round" d="M23.978 11.207v5.319c0 4.399-3.579 7.978-7.978 7.978s-7.978-3.579-7.978-7.978v-5.319h-1.064v5.319c0 4.83 3.81 8.776 8.581 9.018h-0.068v5.354h-4.79v1.064h10.637v-1.064h-4.784v-5.354h-0.073c4.771-0.243 8.581-4.189 8.581-9.018v-5.319h-1.064z" fill="#000000">
+		
+		</path>
+	</svg> -->
+
+	<!-- <svg width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M24 0L0 24" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+		<path d="M0 0L24 24" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+		</svg>
+	</button> -->
 
 <script>
 
 /*
-	============================================
+	====================================
 	СЛУЧАЙНЫЙ ВЫБОР ПРИВЕТСТВЕННОЙ ФРАЗЫ
-	============================================
+	====================================
 */
+setHeroPhrase()
+function setHeroPhrase(){
+	// Генерация случайного индекса
+	const randomIndex = Math.floor(Math.random() * langs[lang][0].length)
 
-// --- СЛУЧАЙНЫЙ ВЫБОР ПРИВЕТСТВЕННОЙ ФРАЗЫ  ---
-
-const phrases = [
-	"Включи микрофон в испанской атмосфере!",
-	"В испанской атмосфере — включай микрофон!",
-	"Испанский рядом – микрофон включай!",
-	"Говорят по-испански: включи микрофон!",
-	"Слышишь испанский: включи микрофон!"]
-
-// Генерация случайного индекса
-const randomIndex = Math.floor(Math.random() * phrases.length)
-
-// Установка случайной фразы в элемент с id="main-phrase"
-//document.getElementById('hero-phrase').textContent = phrases[randomIndex]
+	// Установка случайной фразы в элемент с id="main-phrase"
+	document.getElementById('hero-phrase').textContent = langs[lang][0][randomIndex]
+}
 </script>
 </main>
 </body>
