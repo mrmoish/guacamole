@@ -13,7 +13,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script>
-
 let lang = 'ru'
 
 const langs = {
@@ -220,6 +219,9 @@ async function translateText(text, htmlObj) {
 
 	const params = new URLSearchParams();
 	params.append('auth_key', apiKey);
+	// с кого и на какой язык переводить
+	params.append('source_lang', langs[lang][2]);
+	params.append('target_lang', langs[lang][3]);
 	params.append('text', text);
 
 
@@ -247,6 +249,7 @@ async function translateText(text, htmlObj) {
 		alert('Ошибка:', error);
 	}
 }
+
 </script>
 
 <style>
@@ -346,21 +349,21 @@ button{
 	СЛУЧАЙНЫЙ ВЫБОР ПРИВЕТСТВЕННОЙ ФРАЗЫ
 	====================================
 */
+
 setHeroPhrase()
 function setHeroPhrase(){
 
 
 	recognition.lang = langs[lang][1]; // Устанавливаем языка и региона для распознования речи
 
-	// с кого и на какой язык переводить
-	params.append('source_lang', langs[lang][2]);
-	params.append('target_lang', langs[lang][3]);
-
 	// Генерация случайного индекса
 	const randomIndex = Math.floor(Math.random() * langs[lang][0].length)
 
 	// Установка случайной фразы в элемент с id="main-phrase"
 	document.getElementById('hero-phrase').textContent = langs[lang][0][randomIndex]
+
+
+
 }
 </script>
 </main>
