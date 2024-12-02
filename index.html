@@ -25,15 +25,17 @@ const langs = {
 		"Слышишь испанский: включи микрофон!"],
 		'es-AR',
 		'es',
-		'ru'],
+		'ru',
+		'ESru'],
 	es: [
 		["¡Prendé el micrófono cuando escuchás ruso!",
 		"¡Micrófono listo cuando suena ruso!",
 		"¡Escuchás ruso? ¡Prendé el micro!",
 		"Si escuchás el idioma ruso, ¡usá el micrófono!"],
 		'ru-RU',
+		'ru',
 		'es',
-		'ru']
+		'RUes']
 }
 
 
@@ -84,7 +86,6 @@ function startHearing(){
 
 const recognition = new webkitSpeechRecognition(); //  объект распознавания речи
 recognition.interimResults = true; // промежуточные результаты распознования
-recognition.lang = langs[lang][1]; // Устанавливаем языка и региона
 
 
 recognition.onend = () => {
@@ -221,9 +222,6 @@ async function translateText(text, htmlObj) {
 	params.append('auth_key', apiKey);
 	params.append('text', text);
 
-	params.append('source_lang', langs[lang][2]);
-	params.append('target_lang', langs[lang][3]);
-
 
 	try {
 		const response = await fetch(url, {
@@ -243,7 +241,8 @@ async function translateText(text, htmlObj) {
 	
 		htmlObj.setAttribute('data-overlay', textTrans)
 
-		// sent(text, textTrans)
+		const queryString = new URLSearchParams({collection: langs[lang][4], source: text, target: textTrans}).toString(); // Конвертируем в строку запроса
+		fetch('api/add?' + queryString, { method: 'GET'})
 	} catch (error) {
 		alert('Ошибка:', error);
 	}
@@ -349,6 +348,14 @@ button{
 */
 setHeroPhrase()
 function setHeroPhrase(){
+
+
+	recognition.lang = langs[lang][1]; // Устанавливаем языка и региона для распознования речи
+
+	// с кого и на какой язык переводить
+	params.append('source_lang', langs[lang][2]);
+	params.append('target_lang', langs[lang][3]);
+
 	// Генерация случайного индекса
 	const randomIndex = Math.floor(Math.random() * langs[lang][0].length)
 
