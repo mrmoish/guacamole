@@ -36,36 +36,6 @@ const langs = {
 		'es',
 		'RUes']
 }
-
-
-/*
-	===================
-	СВАЙП - СМЕНА ЯЗЫКА
-	===================
-*/
-
-    // Объявляем переменную для хранения начальной позиции движения касания
-    let startY;
-
-    // Добавляем обработчик события начала движения касания
-    document.addEventListener('touchstart', function(e) {
-        startY = e.touches[0].clientY; // Сохраняем начальную позицию касания по оси Y
-    });
-
-    // Добавляем обработчик события окончания движения касания
-    document.addEventListener('touchend', function(e) {
-
-        // Получаем конечную позицию движения касания по оси Y
-        let endY = e.changedTouches[0].clientY;
-
-        // Проверка на свайп вверх (разница позиций больше 50 пикселей)
-        if (startY - endY > 50 || endY - startY > 50) {
-
-			lang = lang === 'ru' ? 'es' : 'ru'
-			setHeroPhrase()
-        }
-    });
-
 /*
 	==================
 	РАСПОЗНОВАНИЕ РЕЧИ
@@ -353,7 +323,9 @@ button{
 setHeroPhrase()
 function setHeroPhrase(){
 
-
+	// console.log(langs)
+	// console.log(lang)
+	console.log(langs[lang])
 	recognition.lang = langs[lang][1]; // Устанавливаем языка и региона для распознования речи
 
 	// Генерация случайного индекса
@@ -365,6 +337,34 @@ function setHeroPhrase(){
 
 
 }
+
+/*
+	===================
+	СВАЙП - СМЕНА ЯЗЫКА
+	===================
+*/
+
+    // Объявляем переменную для хранения начальной позиции движения касания
+    let startY;
+
+    // Добавляем обработчик события начала движения касания
+    document.getElementById('hero-phrase').addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY; // Сохраняем начальную позицию касания по оси Y
+    });
+
+    // Добавляем обработчик события окончания движения касания
+    document.getElementById('hero-phrase').addEventListener('touchend', function(e) {
+
+        // Получаем конечную позицию движения касания по оси Y
+        let endY = e.changedTouches[0].clientY;
+
+        // Проверка на свайп вверх (разница позиций больше 50 пикселей)
+        if (startY - endY > 50 || endY - startY > 50) {
+
+			lang = lang === 'ru' ? 'es' : 'ru'
+			setHeroPhrase()
+        }
+    });
 </script>
 </main>
 </body>
