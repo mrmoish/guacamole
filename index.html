@@ -86,7 +86,10 @@ recognition.interimResults = true; // промежуточные результ�
 recognition.onend = () => {
     //алтернатива(немного калхоз)
     recognition.start();
-    
+    if(false){
+  	//const queryString = new URLSearchParams({collection: langs[lang][4], source: text, target: textTrans}).toString(); // Конвертируем в строку запроса
+	//fetch('api/add?' + queryString, { method: 'GET'})
+    }
 };
 
 recognition.onresult = (event) => {
@@ -294,11 +297,8 @@ async function translateText(text, htmlObj) {
 		const data = await response.json();
 
 		const textTrans = data.translations[0].text
-	
+
 		htmlObj.setAttribute('data-overlay', textTrans)
-		// Конвертируем в строку запроса
-		const queryString = new URLSearchParams({collection: langs[lang][4], source: text, target: textTrans}).toString();
-		fetch('api/add?' + queryString, { method: 'GET'})
 	} catch (error) {
 		alert('Ошибка:', error);
 	}
