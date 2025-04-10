@@ -285,15 +285,13 @@ async function translateText(text, htmlObj) {
 
 	try {
 		const response = await fetch(url, {
-			method: 'POST',
+			method: 'GET',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: params
 		});
 
-		alert(response)
-
 		if (!response.ok) {
-			alert(` 11 Ошибка HTTP: ${response.status}`)
+			alert(`Ошибка HTTP: ${response.status}`)
 			throw new Error(`Ошибка HTTP: ${response.status}`);
 		}
 
@@ -303,7 +301,7 @@ async function translateText(text, htmlObj) {
 
 		htmlObj.setAttribute('data-overlay', textTrans)
 	} catch (error) {
-		alert('22 Ошибка:', error);
+		alert('Ошибка:', error);
 	}
 }
 
