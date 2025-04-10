@@ -43,11 +43,11 @@ sFor: for (let i = 0; i < userLanguages.length; i++) {
 
 const langs = {
 	ru: [
-		["1 Включи микрофон в испанской атмосфере!",
-		"1 В испанской атмосфере — включай микрофон!",
-		"1 Испанский рядом – микрофон включай!",
-		"1 Говорят по-испански: включи микрофон!",
-		"1 Слышишь испанский: включи микрофон!"],
+		[" Включи микрофон в испанской атмосфере!",
+		" В испанской атмосфере — включай микрофон!",
+		" Испанский рядом – микрофон включай!",
+		" Говорят по-испански: включи микрофон!",
+		" Слышишь испанский: включи микрофон!"],
 		'es-AR',
 		'es',
 		'ru',
@@ -290,7 +290,7 @@ async function translateText(text, htmlObj) {
 		});
 
 		if (!response.ok) {
-			alert(`Ошибка HTTP: ${response.status}`)
+			alert(` 11 Ошибка HTTP: ${response.status}`)
 			throw new Error(`Ошибка HTTP: ${response.status}`);
 		}
 
@@ -300,7 +300,7 @@ async function translateText(text, htmlObj) {
 
 		htmlObj.setAttribute('data-overlay', textTrans)
 	} catch (error) {
-		alert('Ошибка:', error);
+		alert('22 Ошибка:', error);
 	}
 }
 
