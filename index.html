@@ -275,7 +275,7 @@ async function translateText(text, htmlObj) {
 	const apiKey = "2b4685b2-4bde-4d83-aca5-86beff2d9e28:fx"; // Вставьте ваш API ключ здесь
 
 	const params = new URLSearchParams();
-	params.append('auth_key', apiKey);
+	// params.append('auth_key', apiKey);
 	// с кого и на какой язык переводить
 	params.append('source_lang', langs[lang][2]);
 	params.append('target_lang', langs[lang][3]);
@@ -286,7 +286,8 @@ async function translateText(text, htmlObj) {
 	try {
 		const response = await fetch(url, {
 			method: 'GET',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded',
+					'Authorization': `DeepL-Auth-Key ${API_KEY}`,},
 			body: params
 		});
 
