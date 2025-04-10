@@ -281,7 +281,7 @@ async function translateText(text, htmlObj) {
 	params.append('target_lang', langs[lang][3]);
 	params.append('text', text);
 
-	alert(params)
+	
 
 	try {
 		const response = await fetch(url, {
@@ -289,6 +289,8 @@ async function translateText(text, htmlObj) {
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			body: params
 		});
+
+		alert(response)
 
 		if (!response.ok) {
 			alert(` 11 Ошибка HTTP: ${response.status}`)
