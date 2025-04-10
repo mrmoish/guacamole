@@ -281,6 +281,7 @@ async function translateText(text, htmlObj) {
 	params.append('target_lang', langs[lang][3]);
 	params.append('text', text);
 
+	alert(params)
 
 	try {
 		const response = await fetch(url, {
